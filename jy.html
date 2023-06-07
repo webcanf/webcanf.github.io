@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 这里是网站的图标 当前的图标是favicon.ico -->
+    <link rel="shortcut icon" href="favicon.ico" >
+    <!-- 设置网站的背景 要求显示在右边居中往下-->
+	<style>
+		body {
+			background-image: url("background.ico");
+			background-repeat: no-repeat;
+			background-position: right center;
+			background-size: 60%;
+			background-position: 1px 50px;
+		}
+	</style>
+	<title>服务查询</title>
+</head>
+<body>
+	<!-- 标题 -->
+	<h1>服务查询</h1>
+
+	<!-- 查询表单 -->
+	<form>
+		<label for="serviceNumber">服务编号：</label>
+		<input type="text" id="serviceNumber" name="serviceNumber"><br><br>
+		<label for="phoneNumber">手机号：</label>
+		<input type="tel" id="phoneNumber" name="phoneNumber"><br><br>
+		<input type="submit" value="查询">
+	</form>
+
+	<br>
+
+	<!-- 查询结果 -->
+	<div id="result"></div>
+
+	<!-- JavaScript 脚本 -->
+	<script>
+		// 假设以下是卡密数据库的数据，value 的结果用中文表示
+		const cardDatabase = [
+			{ serviceNumber: "SHWEB20230602JY01A", phoneNumber: "18939953534", value: "服务已完成" },
+			{ serviceNumber: "002", phoneNumber: "13987654321", value: "两百元" },
+			{ serviceNumber: "003", phoneNumber: "13654321987", value: "三百元" }
+		];
+
+		// 定义变量记录用户输入错误的次数和最后一次输入错误的时间
+		let failedAttempts = 0;
+		let lastFailedTime = null;
+
+		// 监听表单的提交事件
+		document.querySelector("form").addEventListener("submit", function(event) {
+			event.preventDefault(); // 阻止表单默认提交行为
+
+			// 如果用户输入错误的次数已经达到 3 次，并且最后一次输入错误的时间距离现在不足 1 分钟，则提示用户等待
+			if (failedAttempts >= 3 && lastFailedTime && new Date() - lastFailedTime < 60 * 1000) {
+				document.querySelector("#result").textContent = "您已输错3次，请等待 1 分钟后再试。";
+				return;
+			}
+
+			// 获取用户输入的服务编号和手机号
+			const serviceNumber = document.querySelector("#serviceNumber").value;
+			const phoneNumber = document.querySelector("#phoneNumber").value;
+
+			// 在卡密数据库中查找匹配的卡密
+			const matchedCard = cardDatabase.find(function(card) {
+				return card.serviceNumber === serviceNumber && card.phoneNumber === phoneNumber;
+			});
+
+			// 显示查询结果
+			if (matchedCard) {
+				document.querySelector("#result").textContent = `服务编号${serviceNumber}的服务状态为${matchedCard.value}。`;
+				
+
+				// 如果查询成功，则将错误次数重置为 0
+				failedAttempts = 0;
+			} else {
+				document.querySelector("#result").textContent = "服务编号或手机号错误，请重新输入。";
+
+				// 如果查询失败，则将错误次数加 1，并记录最后一次错误的时间
+				failedAttempts++;
+				lastFailedTime = new Date();
+			}
+		});
+	</script>
+</body>
+</html>
