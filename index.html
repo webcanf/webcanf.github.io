@@ -67,7 +67,7 @@
 
 			// 显示查询结果
 			if (matchedCard) {
-				document.querySelector("#result").textContent = `服务编号${serviceNumber}的服务状态为${matchedCard.value}。`;
+				document.querySelector("#result").textContent = `服务编号${serviceNumber}<${matchedCard.value}>`;
 				
 
 				// 如果查询成功，则将错误次数重置为 0
